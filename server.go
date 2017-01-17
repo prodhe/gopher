@@ -55,7 +55,7 @@ func handleRequest(s string, c net.Conn) {
 	if s == "" || s == "/" {
 		s = "."
 	}
-	s = "." + filepath.Clean("/"+s)
+	s = root + filepath.Clean("/"+s)
 	f, err := os.Open(s)
 	defer f.Close()
 	if err != nil {
@@ -72,13 +72,13 @@ func handleRequest(s string, c net.Conn) {
 			}
 			if info.IsDir() {
 				if len(l) > 0 {
-					l = append(l, item{'1', info.Name(), p, host, 7070})
+					l = append(l, item{'1', info.Name(), p[len(root)-1:], host, 7070})
 					return filepath.SkipDir
 				}
-				l = append(l, item{Type: 'i', Name: info.Name()})
+				l = append(l, item{Type: 'i', Name: p[len(root):]})
 				return nil
 			}
-			l = append(l, item{'0', info.Name(), p, host, 7070})
+			l = append(l, item{'0', info.Name(), p[len(root)-1:], host, 7070})
 			return nil
 		}))
 		fmt.Fprint(c, l)

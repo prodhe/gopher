@@ -10,6 +10,7 @@ import "net"
 const (
 	host string = "localhost"
 	port string = "7070"
+	root string = "."
 )
 
 func main() {
