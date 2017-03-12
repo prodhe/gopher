@@ -21,8 +21,14 @@ type item struct {
 type list []item
 
 func (i item) String() string {
-	return fmt.Sprintf("%c%s\t%s\t%s\t%d\r\n",
-		i.Type, i.Name, i.Selector, i.Host, i.Port)
+	switch i.Type {
+	case 'i':
+		return fmt.Sprintf("%c%s\t\tinfo.host\t1\r\n",
+			i.Type, i.Name)
+	default:
+		return fmt.Sprintf("%c%s\t%s\t%s\t%d\r\n",
+			i.Type, i.Name, i.Selector, i.Host, i.Port)
+	}
 }
 
 func (l list) String() string {
