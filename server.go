@@ -44,7 +44,7 @@ func handleConn(c net.Conn) {
 	defer c.Close()
 	buf := bufio.NewReader(c)
 
-	log.Printf("Open: %v", c.RemoteAddr())
+	// log.Printf("Open: %v", c.RemoteAddr())
 
 	req, _, err := buf.ReadLine()
 	if err != nil {
@@ -54,14 +54,14 @@ func handleConn(c net.Conn) {
 
 	handleRequest(string(req), c)
 
-	log.Printf("Close: %v", c.RemoteAddr())
+	// log.Printf("Close: %v", c.RemoteAddr())
 }
 
 func handleRequest(s string, c net.Conn) {
 	if s == "" || s == "/" {
 		s = "."
 	}
-	s = *root + filepath.Clean("/"+s)
+	s = root + filepath.Clean("/"+s)
 	f, err := os.Open(s)
 	defer f.Close()
 	if err != nil {
@@ -72,19 +72,19 @@ func handleRequest(s string, c net.Conn) {
 	if fi.IsDir() {
 		var l list
 		filepath.Walk(s, (func(p string, info os.FileInfo, err error) error {
-			log.Println(p)
+			// log.Println(p)
 			if p == "." {
 				return nil
 			}
 			if info.IsDir() {
 				if len(l) > 0 {
-					l = append(l, item{'1', info.Name(), p[len(*root)-1:], *host, *port})
+					l = append(l, item{'1', info.Name(), p[len(root)-1:], host, port})
 					return filepath.SkipDir
 				}
-				l = append(l, item{Type: 'i', Name: p[len(*root):]})
+				l = append(l, item{Type: 'i', Name: p[len(root):]})
 				return nil
 			}
-			l = append(l, item{'0', info.Name(), p[len(*root)-1:], *host, *port})
+			l = append(l, item{'0', info.Name(), p[len(root)-1:], host, port})
 			return nil
 		}))
 		fmt.Fprint(c, l)
@@ -102,7 +102,7 @@ func ListenAndServe(addr string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Serving %s at port %d", *root, *port)
+	log.Printf("Serving %s at %s:%d", root, host, port)
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
