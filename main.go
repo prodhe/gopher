@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -24,23 +25,28 @@ func init() {
 	flag.BoolVar(&help, "h", false, "Show usage")
 	flag.StringVar(&host, "a", "localhost", "Public host `address`")
 	flag.IntVar(&port, "p", 70, "Listening `port`")
-	flag.StringVar(&root, "d", "/var/gopher", "Root `directory` to serve")
+	flag.StringVar(&root, "d", "/var/gopher/", "Root `directory` to serve")
 }
 
 func main() {
 	flag.Parse()
 
-	if help {
+	if help || root == "" {
 		fmt.Println("usage: gopher [options]")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
-	// check trailing slash for root directory and append if needed
-	if root != "" {
-		if root[len(root)-1:] != "/" {
-			root = root + "/"
+	// check and correct root directory
+	if !filepath.IsAbs(root) {
+		path, err := filepath.Abs(root)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error: %s\n", err)
 		}
+		root = path
+	}
+	if root[len(root)-1:] != "/" {
+		root = root + "/"
 	}
 
 	addr := net.JoinHostPort("0.0.0.0", strconv.Itoa(port))
