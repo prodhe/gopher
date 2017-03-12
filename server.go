@@ -102,7 +102,7 @@ func ListenAndServe(addr string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Serving %s at %v", *root, addr)
+	log.Printf("Serving %s at port %d", *root, *port)
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
