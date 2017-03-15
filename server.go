@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	G_ERROR = '3'
-	G_INFO  = 'i'
-	G_MENU  = '1'
-	G_TEXT  = '0'
+	G_ERROR byte = '3'
+	G_INFO  byte = 'i'
+	G_MENU  byte = '1'
+	G_TEXT  byte = '0'
 )
 
 type Item struct {
@@ -89,19 +89,22 @@ func Exists(path string) (bool, error) {
 // ListDir scans the given 'path' and returns a gopher list of entries
 func ListDir(path string) List {
 	var l List
+	count := 0
 	filepath.Walk(path, (func(p string, info os.FileInfo, err error) error {
-		if p == "." {
-			return nil
-		}
 		if info.IsDir() {
-			if len(l) > 0 {
-				l = append(l, Row(G_MENU, info.Name(), p[len(root)-1:], host, port))
+			// due to how Walk works, the first folder here is the given path
+			// itself, and we need to not SkipDir it. So for the first run of
+			// this recursive Walk function, we will allow it to nest deeper
+			// by just returning nil
+			if count > 0 {
+				l = append(l, Row(G_MENU, info.Name(), p[len(root)-1:], "", 0))
+				count++
 				return filepath.SkipDir
 			}
-			l = append(l, Row(G_INFO, p[len(root):], "", "", 0))
+			count++
 			return nil
 		}
-		l = append(l, Row(G_TEXT, info.Name(), p[len(root)-1:], host, port))
+		l = append(l, Row(G_TEXT, info.Name(), p[len(root)-1:], "", 0))
 		return nil
 	}))
 	return l
@@ -131,7 +134,7 @@ func handleConn(c net.Conn) {
 	buf := bufio.NewReader(c)
 	req, _, err := buf.ReadLine()
 	if err != nil {
-		fmt.Fprint(c, responseError("Invalid request."))
+		fmt.Fprint(c, Error("Invalid request."))
 	}
 
 	log.Printf("%v: %s", c.RemoteAddr(), req)
@@ -141,12 +144,14 @@ func handleConn(c net.Conn) {
 
 // handleRequest parses the request and sends an answer
 func handleRequest(req string, c net.Conn) {
-	req = root + filepath.Clean("/"+req)
+	safe_req := filepath.Clean("/" + req)
+	req = root + safe_req
+	fmt.Println(safe_req)
 
 	f, err := os.Open(req)
 	defer f.Close()
 	if err != nil {
-		fmt.Fprint(c, responseError("Resource not found."))
+		fmt.Fprint(c, Error("Resource not found."))
 		return
 	}
 
@@ -154,9 +159,9 @@ func handleRequest(req string, c net.Conn) {
 	if fi.IsDir() {
 		var l List
 		if ok, err := Exists(req + "/gophermap"); ok == true && err == nil {
-			l = Gophermap(req + "/gophermap")
+			l = append(l, Gophermap(req+"/gophermap")...)
 		} else {
-			l = ListDir(req)
+			l = append(l, ListDir(req)...)
 		}
 		fmt.Fprint(c, l)
 		return
@@ -167,6 +172,6 @@ func handleRequest(req string, c net.Conn) {
 }
 
 // responseError returns a full response with a gopher-formatted error 's'
-func responseError(s string) List {
+func Error(s string) List {
 	return List{Row(G_ERROR, s, "", "", 0)}
 }
