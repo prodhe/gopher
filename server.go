@@ -104,7 +104,9 @@ func ListDir(path string) List {
 			count++
 			return nil
 		}
-		l = append(l, Row(G_TEXT, info.Name(), p[len(root)-1:], "", 0))
+		if info.Name() != "gophermap" {
+			l = append(l, Row(G_TEXT, info.Name(), p[len(root)-1:], "", 0))
+		}
 		return nil
 	}))
 	return l
