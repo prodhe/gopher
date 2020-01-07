@@ -10,3 +10,7 @@ writers, buffers, []byte and whatnot...
 ## Gopher protocol
 
 https://tools.ietf.org/html/rfc1436
+
+## License
+
+MIT. See LICENSE.
