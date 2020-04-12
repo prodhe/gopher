@@ -13,3 +13,4 @@ jobs:
         with:
           accessToken: ${{ secrets.ACCESS_TOKEN }}
           imageName: gopher
+          imageTag: 0.0.1
