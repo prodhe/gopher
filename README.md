@@ -1,6 +1,7 @@
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/prodhe/gopher) 
-
 # gopher
+
+
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/prodhe/gopher) 
 
 A server hosting files, dirs and links according to the gopher protocol.
 
@@ -11,8 +12,14 @@ writers, buffers, []byte and whatnot...
 
 ## Gopher protocol
 
-https://tools.ietf.org/html/rfc1436
+[ietf rfc](https://tools.ietf.org/html/rfc1436)
 
 ## License
 
 MIT. See LICENSE.
+
+
+## Docker hub
+
+[docker hub](https://hub.docker.com/r/prodhe/gopher/)
+
