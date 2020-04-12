@@ -1,6 +1,10 @@
 name: Docker push on Github registry
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - develop
 
 jobs:
   build:
