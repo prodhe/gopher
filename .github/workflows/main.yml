@@ -12,3 +12,4 @@ jobs:
         uses: matootie/github-docker@v2.2.2
         with:
           accessToken: ${{ secrets.ACCESS_TOKEN }}
+          imageName: gopher
