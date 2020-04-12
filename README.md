@@ -23,7 +23,6 @@ MIT. See LICENSE.
 
 [docker hub](https://hub.docker.com/r/prodhe/gopher/)
 
-<<<<<<< HEAD
 ## Docker compose
 
 ```yml
@@ -42,5 +41,3 @@ services:
 ```
 
 
-=======
->>>>>>> 504b2c99d23e10de9bc1d1226c762bdead7f596d
